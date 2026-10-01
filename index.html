@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CogniDoc AI | Enterprise Intelligent Document Processing (IDP) Platform</title>
+  <meta name="description" content="AI-Powered Intelligent Document Processing platform utilizing OCR, NLP, and Machine Learning to classify documents and extract structured data with high-precision bounding box spatial intelligence.">
+  
+  <!-- Modern Typography: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark">
+  <div id="app-root">
+    
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="nav-brand">
+        <div class="brand-icon-wrapper">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M9 15h6"></path>
+            <path d="M9 11h6"></path>
+            <path d="M9 19h4"></path>
+            <circle cx="17" cy="17" r="3" stroke="var(--accent-primary)" fill="none" stroke-dasharray="2 2"></circle>
+          </svg>
+          <span class="pulse-indicator"></span>
+        </div>
+        <div class="brand-titles">
+          <span class="brand-name">CogniDoc<span class="brand-highlight">AI</span></span>
+          <span class="brand-tagline">Intelligent Document Processing Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="workspace" id="tab-btn-workspace">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          Document Studio
+        </button>
+        <button class="nav-tab" data-tab="batch" id="tab-btn-batch">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Batch Pipeline <span class="badge" id="batch-count-badge">8</span>
+        </button>
+        <button class="nav-tab" data-tab="schemas" id="tab-btn-schemas">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Schema Studio
+        </button>
+        <button class="nav-tab" data-tab="analytics" id="tab-btn-analytics">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Model Telemetry & ROI
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="model-status-chip">
+          <span class="status-dot online"></span>
+          <span class="model-engine-name">OmniExtract-v4.2 • OCR+BERT</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-theme-toggle" title="Toggle Light/Dark Theme">
+          <svg id="theme-icon-sun" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <button class="btn btn-primary btn-sm" id="btn-quick-upload">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Upload Document
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="main-content">
+      
+      <!-- ============================================== -->
+      <!-- TAB 1: DOCUMENT STUDIO WORKSPACE (Default)    -->
+      <!-- ============================================== -->
+      <section class="tab-pane active" id="pane-workspace">
+        
+        <!-- Sidebar 1: Document Queue & Preloaded Samples -->
+        <aside class="sidebar-left">
+          <div class="sidebar-header">
+            <div class="sidebar-header-row">
+              <h2 class="sidebar-title">Doc Queue & Samples</h2>
+              <span class="counter-badge" id="doc-queue-count">6 items</span>
+            </div>
+            <!-- Classification filter pills -->
+            <div class="filter-pills" id="doc-filter-pills">
+              <button class="filter-pill active" data-filter="all">All</button>
+              <button class="filter-pill" data-filter="invoice">Invoices</button>
+              <button class="filter-pill" data-filter="receipt">Receipts</button>
+              <button class="filter-pill" data-filter="form">Forms</button>
+              <button class="filter-pill" data-filter="certificate">Certs</button>
+            </div>
+          </div>
+
+          <!-- Document List Items -->
+          <div class="doc-list" id="doc-list-container">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Drag and Drop Dropzone -->
+          <div class="upload-dropzone" id="upload-dropzone">
+            <input type="file" id="file-input-hidden" accept="image/*,application/pdf" style="display:none">
+            <div class="dropzone-content">
+              <div class="dropzone-icon">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="12"></line><line x1="15" y1="15" x2="12" y2="12"></line></svg>
+              </div>
+              <p class="dropzone-text"><strong>Drag & Drop</strong> PDF, Scan, or Image</p>
+              <span class="dropzone-subtext">Automated OCR & NLP classification</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Center Stage: Interactive Document Canvas & OCR Overlay -->
+        <div class="document-center-viewport">
+          
+          <!-- Viewport Toolbar -->
+          <div class="viewport-toolbar">
+            <div class="toolbar-left">
+              <div class="doc-meta-badge" id="current-doc-title">Acme-Invoice-9482.pdf</div>
+              <div class="doc-class-pill" id="current-doc-class">
+                <span class="class-icon">🧾</span>
+                <span class="class-name">Invoice (Tax Commercial)</span>
+                <span class="confidence-tag">99.2% Conf</span>
+              </div>
+            </div>
+
+            <!-- Canvas Visualization Controls -->
+            <div class="toolbar-controls">
+              <!-- Overlay Toggles -->
+              <div class="toggle-group" title="Overlay Modes">
+                <button class="tool-btn active" id="btn-toggle-boxes" title="Toggle Bounding Boxes (B)">
+                  <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="3 3"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+                  Boxes
+                </button>
+                <button class="tool-btn active" id="btn-toggle-ocr-text" title="Toggle OCR Text Layer (T)">
+                  <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+                  OCR Text
+                </button>
+                <button class="tool-btn" id="btn-toggle-heatmap" title="Toggle Confidence Heatmap (H)">
+                  <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  Heatmap
+                </button>
+                <button class="tool-btn" id="btn-toggle-draw-box" title="Draw New Bounding Box (D)">
+                  <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><polygon points="14 2 18 6 7 17 3 17 3 13 14 2"></polygon><line x1="3" y1="22" x2="21" y2="22"></line></svg>
+                  Tag Box
+                </button>
+              </div>
+
+              <!-- Zoom & Pan Controls -->
+              <div class="zoom-controls">
+                <button class="tool-btn icon-only" id="btn-zoom-out" title="Zoom Out (-)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </button>
+                <span class="zoom-level" id="zoom-level-text">100%</span>
+                <button class="tool-btn icon-only" id="btn-zoom-in" title="Zoom In (+)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </button>
+                <button class="tool-btn icon-only" id="btn-zoom-fit" title="Fit to Screen (F)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                </button>
+                <button class="tool-btn icon-only" id="btn-rotate" title="Rotate 90° (R)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Canvas Workspace with Pan/Zoom viewport -->
+          <div class="canvas-scroll-container" id="canvas-scroll-container">
+            <div class="canvas-stage" id="canvas-stage">
+              <!-- Background rendering element (high resolution SVG / Canvas layout) -->
+              <div class="document-page-sheet" id="document-page-sheet">
+                <!-- Document visual content rendered dynamically -->
+              </div>
+              <!-- Spatial Bounding Box Overlay SVG Layer -->
+              <svg class="bounding-box-overlay" id="bounding-box-overlay" xmlns="http://www.w3.org/2000/svg">
+                <!-- Dynamic <rect> and <g> for OCR entity tokens -->
+              </svg>
+              <!-- Interactive Drawing Rect for User Tagging -->
+              <div class="draw-selection-box" id="draw-selection-box" style="display:none;"></div>
+            </div>
+          </div>
+
+          <!-- Canvas Bottom Info Bar -->
+          <div class="canvas-bottom-bar">
+            <div class="canvas-legend">
+              <span class="legend-item"><span class="legend-dot dot-header"></span>Metadata/Header</span>
+              <span class="legend-item"><span class="legend-dot dot-entity"></span>Entities / Parties</span>
+              <span class="legend-item"><span class="legend-dot dot-financial"></span>Financial / Monetary</span>
+              <span class="legend-item"><span class="legend-dot dot-table"></span>Tabular Line Items</span>
+              <span class="legend-item"><span class="legend-dot dot-lowconf"></span>Low Confidence (&lt;85%)</span>
+            </div>
+            <div class="canvas-stats">
+              <span id="canvas-ocr-tokens">94 OCR Tokens</span> • 
+              <span id="canvas-processing-time">Extracted in 418ms</span> • 
+              <span class="keyboard-tip">💡 Tip: Hover sidebar fields to locate in document</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar 2: Extracted Structured Data & Human-in-the-Loop (HITL) Inspector -->
+        <aside class="sidebar-right">
+          
+          <!-- Extraction Header & Verification Action -->
+          <div class="extraction-header">
+            <div class="header-top">
+              <div>
+                <h2 class="sidebar-title">Structured Data Extraction</h2>
+                <div class="extraction-subhead">NLP Entity & Table Parsing</div>
+              </div>
+              <div class="overall-doc-score" id="doc-overall-score">
+                <span class="score-val">97.8%</span>
+                <span class="score-label">Avg Confidence</span>
+              </div>
+            </div>
+
+            <!-- Status Banner & HITL Action -->
+            <div class="hitl-status-banner" id="hitl-banner">
+              <div class="status-indicator-group">
+                <span class="status-pill status-ready" id="doc-status-pill">Ready for Verification</span>
+                <span class="status-subtext" id="doc-status-subtext">All key fields extracted above threshold</span>
+              </div>
+              <div class="hitl-btn-actions">
+                <button class="btn btn-sm btn-success" id="btn-approve-doc">
+                  <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Approve & Export
+                </button>
+                <button class="btn btn-sm btn-outline" id="btn-re-extract" title="Rerun OCR & Machine Learning Models">
+                  <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                  Re-parse
+                </button>
+              </div>
+            </div>
+
+            <!-- Section Tabs: Key-Values vs Line Items vs Raw JSON -->
+            <div class="extraction-subtabs">
+              <button class="subtab-btn active" data-subtab="fields">Key-Value Pairs (<span id="count-fields">12</span>)</button>
+              <button class="subtab-btn" data-subtab="tables">Tables & Line Items (<span id="count-tables">4</span>)</button>
+              <button class="subtab-btn" data-subtab="json">Raw JSON</button>
+            </div>
+          </div>
+
+          <!-- Scrollable Extraction Inspector Container -->
+          <div class="extraction-body" id="extraction-body-container">
+            
+            <!-- SUBTAB 1: Key-Value Field Groups -->
+            <div class="subtab-content active" id="subtab-content-fields">
+              <div class="field-groups-container" id="field-groups-container">
+                <!-- Populated dynamically: Document Info, Vendor/Party, Financial Summary, Validation Checks -->
+              </div>
+            </div>
+
+            <!-- SUBTAB 2: Tabular Line Items -->
+            <div class="subtab-content" id="subtab-content-tables">
+              <div class="table-extraction-container" id="table-extraction-container">
+                <!-- Dynamically populated line items table with column confidence -->
+              </div>
+            </div>
+
+            <!-- SUBTAB 3: Raw JSON / REST Webhook Payload -->
+            <div class="subtab-content" id="subtab-content-json">
+              <div class="json-viewer-header">
+                <span>Standardized JSON Schema v2</span>
+                <button class="btn btn-xs btn-outline" id="btn-copy-json">Copy JSON</button>
+              </div>
+              <pre class="json-code-block" id="json-code-block"><code>{ ... }</code></pre>
+            </div>
+          </div>
+
+          <!-- Bottom Actions / Export Panel -->
+          <div class="extraction-footer">
+            <div class="active-learning-note">
+              <svg viewBox="0 0 24 24" width="13" height="13" stroke="var(--accent-primary)" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>HITL Edits automatically refine extraction embeddings (+0.2% accuracy)</span>
+            </div>
+            <div class="footer-buttons">
+              <button class="btn btn-outline" id="btn-export-csv">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                Export CSV
+              </button>
+              <button class="btn btn-outline" id="btn-export-json">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                Export JSON
+              </button>
+              <button class="btn btn-primary" id="btn-send-webhook">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                Post Webhook
+              </button>
+            </div>
+          </div>
+
+        </aside>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- TAB 2: BATCH PROCESSING PIPELINE               -->
+      <!-- ============================================== -->
+      <section class="tab-pane" id="pane-batch">
+        <div class="batch-pipeline-container">
+          <div class="batch-header-banner">
+            <div>
+              <h1 class="page-title">High-Volume Batch Processing Pipeline</h1>
+              <p class="page-subtitle">Asynchronous OCR, Classification, and NLP Extraction Queue with Straight-Through-Processing (STP)</p>
+            </div>
+            <div class="batch-action-buttons">
+              <button class="btn btn-outline" id="btn-add-batch-sample">Add 5 Sample Files</button>
+              <button class="btn btn-success" id="btn-start-batch-run">
+                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Execute Pipeline Run
+              </button>
+            </div>
+          </div>
+
+          <!-- Batch Metrics Quick Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-label">Queue Length</div>
+              <div class="metric-value" id="batch-metric-total">8 Documents</div>
+              <div class="metric-trend positive">100% capacity ready</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">STP Target (No Human Review)</div>
+              <div class="metric-value">87.5%</div>
+              <div class="metric-trend positive">⚡ 7/8 auto-approved</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Avg Processing Latency</div>
+              <div class="metric-value">1.18s / doc</div>
+              <div class="metric-trend positive">Parallel GPU Worker pool</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Flagged for HITL Review</div>
+              <div class="metric-value" id="batch-metric-flagged">1 Document</div>
+              <div class="metric-trend warning">Confidence &lt; 85% threshold</div>
+            </div>
+          </div>
+
+          <!-- Batch Table -->
+          <div class="batch-table-card">
+            <div class="card-header-flex">
+              <h3 class="card-heading">Active Pipeline Items</h3>
+              <div class="search-and-filter">
+                <input type="text" class="input-search" id="batch-search-input" placeholder="Search batch documents...">
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="batch-jobs-table">
+                <thead>
+                  <tr>
+                    <th>Document Name</th>
+                    <th>Auto-Classified Type</th>
+                    <th>Classification Score</th>
+                    <th>Extracted Entities</th>
+                    <th>Status</th>
+                    <th>Extraction Quality</th>
+                    <th>Latency</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-jobs-tbody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- TAB 3: SCHEMA STUDIO & CUSTOM MODEL BUILDER    -->
+      <!-- ============================================== -->
+      <section class="tab-pane" id="pane-schemas">
+        <div class="schema-studio-container">
+          <div class="schema-header-banner">
+            <div>
+              <h1 class="page-title">Schema Studio & Model Configuration</h1>
+              <p class="page-subtitle">Configure extraction schemas, validation rules, regex patterns, and confidence thresholds for custom document types</p>
+            </div>
+            <button class="btn btn-primary" id="btn-create-schema">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              New Document Schema
+            </button>
+          </div>
+
+          <div class="schema-split-view">
+            <!-- Left: Document Schemas List -->
+            <div class="schema-cards-column" id="schema-cards-list">
+              <!-- Populated with Invoice, Receipt, Form, Certificate, Medical, Contract schemas -->
+            </div>
+
+            <!-- Right: Schema Detail & Field Definition Editor -->
+            <div class="schema-editor-column" id="schema-editor-column">
+              <div class="editor-card" id="schema-editor-card">
+                <div class="editor-header">
+                  <div>
+                    <h3 class="editor-title" id="editor-schema-name">Commercial Invoice Schema</h3>
+                    <span class="editor-sub" id="editor-schema-type">Classifier Model: `cls_finance_invoice_v3`</span>
+                  </div>
+                  <div class="editor-badge">Active Model</div>
+                </div>
+
+                <div class="schema-meta-row">
+                  <div class="form-group">
+                    <label>Auto-Approval Confidence Threshold</label>
+                    <div class="slider-with-val">
+                      <input type="range" min="70" max="99" value="88" class="range-slider" id="threshold-slider">
+                      <span class="slider-val-badge" id="threshold-val">88%</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Arithmetic Balancing</label>
+                    <div class="toggle-checkbox-row">
+                      <input type="checkbox" id="check-arithmetic" checked>
+                      <span>Validate Subtotal + Tax == Total</span>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 class="section-subheading">Defined Extraction Fields (12)</h4>
+                <div class="fields-definition-table-wrapper">
+                  <table class="fields-def-table" id="schema-fields-table">
+                    <thead>
+                      <tr>
+                        <th>Field Key</th>
+                        <th>Display Name</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Regex / NLP Pattern</th>
+                        <th>Min Confidence</th>
+                      </tr>
+                    </thead>
+                    <tbody id="schema-fields-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="schema-editor-footer">
+                  <button class="btn btn-outline btn-sm" id="btn-add-schema-field">+ Add Extraction Field</button>
+                  <button class="btn btn-primary btn-sm" id="btn-save-schema">Save & Deploy Schema</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- TAB 4: MODEL TELEMETRY & BUSINESS ROI DASHBOARD-->
+      <!-- ============================================== -->
+      <section class="tab-pane" id="pane-analytics">
+        <div class="analytics-container">
+          <div class="analytics-header">
+            <div>
+              <h1 class="page-title">Model Telemetry & Business ROI Dashboard</h1>
+              <p class="page-subtitle">Real-time inference performance, OCR character accuracy, classifier confusion matrix, and manual hour savings</p>
+            </div>
+            <div class="date-range-badge">Past 30 Days (Production Telemetry)</div>
+          </div>
+
+          <!-- Top ROI Stat Cards -->
+          <div class="kpi-banner-grid">
+            <div class="kpi-card highlight-glow">
+              <div class="kpi-icon">💰</div>
+              <div class="kpi-meta">
+                <span class="kpi-title">Estimated Cost Savings</span>
+                <span class="kpi-value">$42,910</span>
+                <span class="kpi-caption">Saved across 28,450 documents</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">⏱️</div>
+              <div class="kpi-meta">
+                <span class="kpi-title">Manual Hours Eliminated</span>
+                <span class="kpi-value">1,422 hrs</span>
+                <span class="kpi-caption">~3.2 mins saved per document</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">🎯</div>
+              <div class="kpi-meta">
+                <span class="kpi-title">OCR Character Accuracy</span>
+                <span class="kpi-value">98.7%</span>
+                <span class="kpi-caption">Evaluated against golden dataset</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">⚡</div>
+              <div class="kpi-meta">
+                <span class="kpi-title">Straight-Through Processing (STP)</span>
+                <span class="kpi-value">86.4%</span>
+                <span class="kpi-caption">Zero-touch automated validation</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Visual Charts Grid -->
+          <div class="charts-grid">
+            <!-- Chart 1: Document Processing Volume & STP Rate -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h3 class="chart-title">Daily Ingestion & Straight-Through Processing (STP)</h3>
+                  <span class="chart-subtitle">Green: Automated STP | Amber: Human-in-the-Loop review</span>
+                </div>
+                <span class="chart-tag">Weekly Trend</span>
+              </div>
+              <div class="chart-canvas-wrapper" id="chart-volume-container">
+                <!-- Injected via SVG Bar Visualizer -->
+              </div>
+            </div>
+
+            <!-- Chart 2: Document Classification Distribution -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h3 class="chart-title">Document Classification Breakdown</h3>
+                  <span class="chart-subtitle">Distribution across 6 core enterprise document categories</span>
+                </div>
+                <span class="chart-tag">Multi-class Model</span>
+              </div>
+              <div class="chart-canvas-wrapper" id="chart-distribution-container">
+                <!-- Injected via SVG Donut & Legend -->
+              </div>
+            </div>
+
+            <!-- Chart 3: Model Field Confidence Distribution -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h3 class="chart-title">Field Extraction Confidence Spectrum</h3>
+                  <span class="chart-subtitle">Distribution of confidence across 150,000+ extracted entities</span>
+                </div>
+                <span class="chart-tag">Quality Guardrails</span>
+              </div>
+              <div class="chart-canvas-wrapper" id="chart-confidence-container">
+                <!-- Injected via SVG Bell Curve -->
+              </div>
+            </div>
+
+            <!-- Chart 4: Human-in-the-loop Active Learning Gains -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div>
+                  <h3 class="chart-title">Continuous Learning & Model Drift Mitigation</h3>
+                  <span class="chart-subtitle">Model accuracy growth with HITL annotation feedback</span>
+                </div>
+                <span class="chart-tag">+4.1% MoM</span>
+              </div>
+              <div class="chart-canvas-wrapper" id="chart-activelearning-container">
+                <!-- Injected via SVG Line Chart -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Toast Notification Center -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Webhook Simulated Modal -->
+    <div class="modal-backdrop" id="webhook-modal" style="display:none;">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <span class="webhook-badge">HTTP POST</span>
+            <h3>ERP / Webhook Dispatch Simulation</h3>
+          </div>
+          <button class="modal-close" id="btn-close-webhook-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">Simulated outbound integration payload dispatched to your target ERP (SAP, Oracle NetSuite, QuickBooks, or Salesforce):</p>
+          <div class="form-group">
+            <label>Target Webhook Endpoint</label>
+            <input type="text" class="input-text" id="webhook-url-input" value="https://api.enterprise-erp.corp/v1/documents/ingest" readonly>
+          </div>
+          <div class="form-group">
+            <label>Payload (JSON with Bounding Boxes & Confidence)</label>
+            <pre class="modal-json-pre"><code id="webhook-payload-code"></code></pre>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" id="btn-cancel-webhook">Close</button>
+          <button class="btn btn-primary" id="btn-simulate-post">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Send Test Payload
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tag New Field Modal (when drawing custom bounding box) -->
+    <div class="modal-backdrop" id="tag-box-modal" style="display:none;">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-header">
+          <h3>Tag Custom Extracted Field</h3>
+          <button class="modal-close" id="btn-close-tag-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Selected Text in Box</label>
+            <input type="text" class="input-text" id="tag-box-text" value="INV-2026-9810">
+          </div>
+          <div class="form-group">
+            <label>Assign to Schema Field</label>
+            <select class="input-select" id="tag-box-field-select">
+              <option value="custom_notes">Custom Notes</option>
+              <option value="tracking_number">Tracking / Bill of Lading Number</option>
+              <option value="tax_exemption_code">Tax Exemption Code</option>
+              <option value="department_code">Department Cost Center</option>
+              <option value="po_reference">Customer PO Reference</option>
+              <option value="custom_entity">Custom Key-Value Entity</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Coordinates (Spatial Bounding Box)</label>
+            <div class="bbox-coords-badge" id="tag-box-coords">y: 120, x: 340, w: 180, h: 28</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline btn-sm" id="btn-cancel-tag">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-save-tag-field">Save to Structured Data</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
